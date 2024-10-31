@@ -9,13 +9,18 @@ const games = ref([
     p1: {
       name: "Player 1",
       algorithm: "random",
+      type: "human",
+      history: [],
     },
     p2: {
       name: "Player 2",
       algorithm: "random",
+      type: "human",
+      history: [],
     },
     winner: null,
     state: "start-settings",
+    turn: "p1",
   },
 ]);
 
@@ -25,13 +30,18 @@ const addGame = () => {
     p1: {
       name: "Player 1",
       algorithm: "random",
+      type: "human",
+      history: [],
     },
     p2: {
       name: "Player 2",
       algorithm: "random",
+      type: "human",
+      history: [],
     },
     winner: null,
     state: "start-settings",
+    turn: "p1",
   });
 };
 </script>
@@ -47,21 +57,21 @@ const addGame = () => {
         <div class="flex">
           <div>
             {{ run.p1.name }}
-            <span v-if="run.p1.name !== 'Algorithm'">
+            <span v-if="run.p1.type !== 'human'">
               ({{ run.p1.algorithm }})
             </span>
           </div>
           <span class="px-2"> vs </span>
           <div>
             {{ run.p2.name }}
-            <span v-if="run.p1.name !== 'Algorithm'">
+            <span v-if="run.p2.type !== 'human'">
               ({{ run.p2.algorithm }})
             </span>
           </div>
         </div>
         <div v-if="run.winner">Winner : {{ run.winner || "?" }}</div>
       </template>
-      <GameRun :run="run" />
+      <GameRun :run="run" @update="run = $event" />
     </GameRunContainer>
   </div>
 </template>

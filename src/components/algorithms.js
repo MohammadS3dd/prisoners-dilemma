@@ -125,4 +125,6 @@ algorithms.TTFT = {
   },
 };
 
-const algorithmKeys = Object.keys(algorithms);
+export const algorithmKeys = Object.keys(algorithms);
+export const algorithmValues = Object.values(algorithms);
+export default algorithms;
