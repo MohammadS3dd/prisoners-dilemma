@@ -574,7 +574,12 @@ const scores = computed(() => {
       <div
         class="flex flex-col w-full h-20 justify-center items-center text-lg"
       >
-        <div class="flex p-2" v-if="run.p1.algorithm === 'Unknown ???'">
+        <div
+          class="flex p-2"
+          v-if="
+            run.p1.algorithm === 'Unknown ???' && run.p1.type === 'computer'
+          "
+        >
           {{ run.p1.name }} algorithm is
           <div
             class="bg-gray-500 mx-2 rounded-lg"
@@ -588,7 +593,12 @@ const scores = computed(() => {
             {{ secretAlgorithms.p1.name }}
           </div>
         </div>
-        <div class="flex p-2" v-if="run.p2.algorithm === 'Unknown ???'">
+        <div
+          class="flex p-2"
+          v-if="
+            run.p2.algorithm === 'Unknown ???' && run.p2.type === 'computer'
+          "
+        >
           {{ run.p2.name }} algorithm is
           <div
             class="bg-gray-500 mx-2 rounded-lg"
