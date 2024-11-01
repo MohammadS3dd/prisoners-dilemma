@@ -61,9 +61,15 @@ watch(
 </script>
 
 <template>
-  <div class="flex flex-col bg-slate-50 p-6 w-full h-screen overflow-y-auto">
+  <div
+    class="flex flex-col bg-slate-50 p-6 w-full h-screen overflow-y-auto bg-gray-50"
+  >
     <h1 class="font-bold text-2xl text-slate-700 mb-4">Prisoners dilemma</h1>
-    <GameRunContainer class="mb-4" v-for="(run, index) in games" :key="index">
+    <GameRunContainer
+      class="mb-4 bg-white"
+      v-for="(run, index) in games"
+      :key="index"
+    >
       <template #header>
         <span class="font-bold"> Game {{ run.id }} </span>
         <div class="flex">

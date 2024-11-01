@@ -2,6 +2,7 @@
 import { computed, ref, useTemplateRef, watch } from "vue";
 import { algorithmFuncs, calculateScores, getRandomItem } from "./algorithms";
 const speed = ref(50);
+const unknownSpoilerBlock = ref([true, true]);
 const endScrollRef = useTemplateRef("endScrollRef");
 const props = defineProps({
   run: {
@@ -61,13 +62,17 @@ const maskedMoves = computed(() => {
   };
 });
 
-const secretAlgorithm = getRandomItem(algorithmFuncs);
+const secretAlgorithms = {
+  p1: getRandomItem(algorithmFuncs.slice(0, -1)),
+  p2: getRandomItem(algorithmFuncs.slice(0, -1)),
+};
 const handleComputerMove = (player) => {
   if (playerToTurn.value === player && run.value[player].type === "computer") {
     let func = algorithmFuncs.find(
       (f) => f.name === run.value[player].algorithm
     );
-    if (run.value[player].algorithm === "Unknown ???") func = secretAlgorithm;
+    if (run.value[player].algorithm === "Unknown ???")
+      func = secretAlgorithms[player];
 
     run.value[player].history.push(
       func.turn(
@@ -132,14 +137,14 @@ const scores = computed(() => {
             <div class="col-span-1">against:</div>
             <div class="flex items-center gap-3">
               <div
-                class="p-2 border rounded-lg"
+                class="p-2 border rounded-lg cursor-pointer"
                 @click="run.p1.type = 'computer'"
                 :class="{ 'ring ring-blue-600 ': run.p1.type === 'computer' }"
               >
                 Computer
               </div>
               <div
-                class="p-2 border rounded-lg"
+                class="p-2 border rounded-lg cursor-pointer"
                 @click="run.p1.type = 'human'"
                 :class="{ 'ring ring-blue-600 ': run.p1.type === 'human' }"
               >
@@ -193,14 +198,14 @@ const scores = computed(() => {
             <div class="col-span-1">against:</div>
             <div class="flex items-center gap-3">
               <div
-                class="p-2 border rounded-lg"
+                class="p-2 border rounded-lg cursor-pointer"
                 @click="run.p2.type = 'computer'"
                 :class="{ 'ring ring-blue-600 ': run.p2.type === 'computer' }"
               >
                 Computer
               </div>
               <div
-                class="p-2 border rounded-lg"
+                class="p-2 border rounded-lg cursor-pointer"
                 @click="run.p2.type = 'human'"
                 :class="{ 'ring ring-blue-600 ': run.p2.type === 'human' }"
               >
@@ -300,9 +305,9 @@ const scores = computed(() => {
               <div
                 class="flex justify-center items-center border-slate-300 p-2 border rounded-lg w-20 h-20"
                 :class="{
-                  'bg-green-100':
+                  'bg-green-100 border-green-200':
                     run.p1.history[index] && index < run.p2.history.length,
-                  'bg-red-100':
+                  'bg-red-100 border-red-200':
                     run.p1.history[index] === false &&
                     index < run.p2.history.length,
                   'hidden-choice':
@@ -370,8 +375,8 @@ const scores = computed(() => {
               <div
                 class="flex justify-center items-center border-slate-300 p-2 border rounded-lg w-20 h-20"
                 :class="{
-                  'bg-green-100': run.p2.history[index],
-                  'bg-red-100': run.p2.history[index] === false,
+                  'bg-green-100 border-green-200': run.p2.history[index],
+                  'bg-red-100 border-red-200': run.p2.history[index] === false,
                 }"
               >
                 <svg
@@ -565,6 +570,38 @@ const scores = computed(() => {
         class="flex w-full h-20 justify-center items-center font-bold text-lg"
       >
         <span> Game is Over !!! {{ run[run.winner].name }} won ! </span>
+      </div>
+      <div
+        class="flex flex-col w-full h-20 justify-center items-center text-lg"
+      >
+        <div class="flex p-2" v-if="run.p1.algorithm === 'Unknown ???'">
+          {{ run.p1.name }} algorithm is
+          <div
+            class="bg-gray-500 mx-2 rounded-lg"
+            @click="unknownSpoilerBlock[0] = false"
+            :class="{
+              'bg-transparent text-gray-900': !unknownSpoilerBlock[0],
+              'text-transparent cursor-pointer animate-pulse':
+                unknownSpoilerBlock[0],
+            }"
+          >
+            {{ secretAlgorithms.p1.name }}
+          </div>
+        </div>
+        <div class="flex p-2" v-if="run.p2.algorithm === 'Unknown ???'">
+          {{ run.p2.name }} algorithm is
+          <div
+            class="bg-gray-500 mx-2 rounded-lg"
+            @click="unknownSpoilerBlock[1] = false"
+            :class="{
+              'bg-transparent text-gray-900': !unknownSpoilerBlock[1],
+              'text-transparent cursor-pointer animate-pulse':
+                unknownSpoilerBlock[1],
+            }"
+          >
+            {{ secretAlgorithms.p2.name }}
+          </div>
+        </div>
       </div>
     </template>
   </div>
