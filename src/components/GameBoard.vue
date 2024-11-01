@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 const count = ref(0);
 
@@ -8,19 +8,20 @@ const games = ref([
     id: 0,
     p1: {
       name: "Player 1",
-      algorithm: "random",
+      algorithm: "Random",
       type: "human",
       history: [],
     },
     p2: {
       name: "Player 2",
-      algorithm: "random",
+      algorithm: "Random",
       type: "human",
       history: [],
     },
     winner: null,
     state: "start-settings",
     turn: "p1",
+    maxTurn: 8,
   },
 ]);
 
@@ -29,29 +30,40 @@ const addGame = () => {
     id: games.value.length + 1,
     p1: {
       name: "Player 1",
-      algorithm: "random",
+      algorithm: "Random",
       type: "human",
       history: [],
     },
     p2: {
       name: "Player 2",
-      algorithm: "random",
+      algorithm: "Random",
       type: "human",
       history: [],
     },
     winner: null,
     state: "start-settings",
     turn: "p1",
+    maxTurn: 8,
   });
 };
+
+watch(
+  games,
+  () => {
+    console.log("1");
+    if (games.value[games.value.length - 1].state === "game-ended") {
+      console.log("2");
+      addGame();
+    }
+  },
+  { deep: true }
+);
 </script>
 
 <template>
-  <div class="flex flex-col bg-slate-50 p-6 w-full h-screen">
-    <h1 class="font-bold text-2xl text-center text-slate-700">
-      Prisoners dilemma
-    </h1>
-    <GameRunContainer v-for="(run, index) in games" :key="index">
+  <div class="flex flex-col bg-slate-50 p-6 w-full h-screen overflow-y-auto">
+    <h1 class="font-bold text-2xl text-slate-700 mb-4">Prisoners dilemma</h1>
+    <GameRunContainer class="mb-4" v-for="(run, index) in games" :key="index">
       <template #header>
         <span class="font-bold"> Game {{ run.id }} </span>
         <div class="flex">
@@ -69,7 +81,7 @@ const addGame = () => {
             </span>
           </div>
         </div>
-        <div v-if="run.winner">Winner : {{ run.winner || "?" }}</div>
+        <div v-if="run.winner">Winner : {{ run[run.winner].name || "?" }}</div>
       </template>
       <GameRun :run="run" @update="run = $event" />
     </GameRunContainer>

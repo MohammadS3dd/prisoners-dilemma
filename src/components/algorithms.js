@@ -111,6 +111,7 @@ algorithms.TFTT = {
   },
 };
 
+
 // Two Tits for Tat
 algorithms.TTFT = {
   name: "Two Tits for Tat",
@@ -124,7 +125,58 @@ algorithms.TTFT = {
     );
   },
 };
+algorithms.UKNOWN = { name: "Unknown ???" };
 
 export const algorithmKeys = Object.keys(algorithms);
-export const algorithmValues = Object.values(algorithms);
+export const algorithmFuncs = Object.values(algorithms);
 export default algorithms;
+export function calculateScores(player1History, player2History) {
+  // Ensure both histories are the same length
+  if (player1History.length > player2History.length) {
+    player1History = player1History.slice(0, player2History.length);
+} else if (player2History.length > player1History.length) {
+    player2History = player2History.slice(0, player1History.length);
+}
+  // Define scores
+  const scores = {
+      bothCooperate: [3, 3],
+      player1Defects: [5, 0],
+      player2Defects: [0, 5],
+      bothDefect: [1, 1]
+  };
+
+  // Initialize score totals
+  let player1Score = 0;
+  let player2Score = 0;
+
+  // Calculate scores based on each round
+  for (let i = 0; i < player1History.length; i++) {
+      const player1Choice = player1History[i];
+      const player2Choice = player2History[i];
+
+      if (player1Choice && player2Choice) { // Both cooperate
+          player1Score += scores.bothCooperate[0];
+          player2Score += scores.bothCooperate[1];
+      } else if (!player1Choice && player2Choice) { // Player 1 defects, Player 2 cooperates
+          player1Score += scores.player1Defects[0];
+          player2Score += scores.player1Defects[1];
+      } else if (player1Choice && !player2Choice) { // Player 1 cooperates, Player 2 defects
+          player1Score += scores.player2Defects[0];
+          player2Score += scores.player2Defects[1];
+      } else { // Both defect
+          player1Score += scores.bothDefect[0];
+          player2Score += scores.bothDefect[1];
+      }
+  }
+
+  // Return the total scores
+  return {
+      p1: player1Score,
+      p2: player2Score
+  };
+}
+export function getRandomItem(arr) {
+  if (arr.length === 0) return null; // Handle empty array case
+  const randomIndex = Math.floor(Math.random() * arr.length);
+  return arr[randomIndex];
+}
